@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          image: nasif10/spring-app:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: host
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: dbName
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+---
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: spring-svc
+spec:
+  selector:
+    app: spring-app
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080

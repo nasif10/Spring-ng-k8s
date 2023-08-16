@@ -1,0 +1,32 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: ng-app-depl
+spec:
+  selector:
+    matchLabels:
+      app: ng-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ng-app
+    spec:
+      containers:
+      - name: ng-app
+        image: nasif10/ng-app:1.0
+        ports:
+        - containerPort: 80
+        
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: ng-svc
+spec:
+  selector:
+    app: ng-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
